@@ -1,0 +1,42 @@
+# CodePilot Training Configuration
+
+# Model Configuration
+model_name_or_path: "codellama/CodeLlama-13b-Instruct-hf"
+use_4bit: true
+bnb_4bit_compute_dtype: "float16"
+bnb_4bit_quant_type: "nf4"
+use_nested_quant: false
+
+# Data Configuration
+dataset_path: "../data/processed"
+max_seq_length: 2048
+
+# LoRA Configuration
+lora_r: 16
+lora_alpha: 32
+lora_dropout: 0.05
+target_modules: "q_proj,v_proj,k_proj,o_proj,gate_proj,up_proj,down_proj"
+
+# Training Arguments
+output_dir: "./checkpoints/codepilot-13b"
+num_train_epochs: 3
+per_device_train_batch_size: 4
+gradient_accumulation_steps: 8
+learning_rate: 2.0e-4
+weight_decay: 0.001
+warmup_steps: 100
+lr_scheduler_type: "cosine"
+logging_steps: 10
+save_steps: 500
+eval_steps: 500
+evaluation_strategy: "steps"
+save_total_limit: 3
+fp16: true
+optim: "paged_adamw_32bit"
+max_grad_norm: 0.3
+group_by_length: true
+report_to: "wandb"
+
+# System
+dataloader_num_workers: 4
+gradient_checkpointing: true

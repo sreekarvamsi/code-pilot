@@ -1,0 +1,115 @@
+{
+  "name": "codepilot-automotive",
+  "displayName": "CodePilot - Automotive Assistant",
+  "description": "AI-powered code completion for automotive embedded C/C++ development",
+  "version": "1.0.0",
+  "publisher": "sreekar-gajula",
+  "icon": "images/icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sreekar-gajula/code-pilot"
+  },
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Machine Learning",
+    "Snippets"
+  ],
+  "keywords": [
+    "automotive",
+    "embedded",
+    "C",
+    "C++",
+    "AUTOSAR",
+    "CAN",
+    "ISO26262",
+    "code completion",
+    "AI"
+  ],
+  "activationEvents": [
+    "onLanguage:c",
+    "onLanguage:cpp"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "codepilot.complete",
+        "title": "CodePilot: Complete Code"
+      },
+      {
+        "command": "codepilot.explain",
+        "title": "CodePilot: Explain Code"
+      },
+      {
+        "command": "codepilot.detectBugs",
+        "title": "CodePilot: Detect Bugs"
+      },
+      {
+        "command": "codepilot.generateTests",
+        "title": "CodePilot: Generate Unit Tests"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "codepilot.complete",
+        "key": "ctrl+shift+space",
+        "when": "editorTextFocus"
+      }
+    ],
+    "configuration": {
+      "title": "CodePilot",
+      "properties": {
+        "codepilot.apiEndpoint": {
+          "type": "string",
+          "default": "http://localhost:8000",
+          "description": "CodePilot API endpoint URL"
+        },
+        "codepilot.enableAutoComplete": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable automatic code completion"
+        },
+        "codepilot.maxTokens": {
+          "type": "number",
+          "default": 150,
+          "description": "Maximum tokens to generate"
+        },
+        "codepilot.temperature": {
+          "type": "number",
+          "default": 0.2,
+          "description": "Sampling temperature (0.0 - 1.0)"
+        },
+        "codepilot.debounceMs": {
+          "type": "number",
+          "default": 300,
+          "description": "Debounce time in milliseconds before triggering completion"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.80.0",
+    "@types/node": "^20.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.45.0",
+    "typescript": "^5.1.6",
+    "@vscode/test-electron": "^2.3.4",
+    "vsce": "^2.15.0"
+  },
+  "dependencies": {
+    "axios": "^1.5.0"
+  }
+}

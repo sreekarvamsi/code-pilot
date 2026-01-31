@@ -1,0 +1,89 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv
+pip-log.txt
+pip-delete-this-directory.txt
+.pytest_cache/
+.coverage
+htmlcov/
+*.egg-info/
+dist/
+build/
+
+# Jupyter Notebooks
+.ipynb_checkpoints
+*.ipynb
+
+# Models & Data
+model/checkpoints/
+data/raw/
+data/processed/
+*.bin
+*.safetensors
+*.gguf
+*.pth
+*.pt
+
+# Logs
+logs/
+*.log
+wandb/
+runs/
+
+# Environment
+.env
+.env.local
+*.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Node.js (VSCode Extension)
+vscode-extension/node_modules/
+vscode-extension/out/
+vscode-extension/*.vsix
+package-lock.json
+
+# Compiled files
+*.o
+*.exe
+*.out
+a.out
+
+# Evaluation results
+evaluation/results/
+*.json.backup
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Docker
+*.dockerignore
+
+# System files
+Thumbs.db
+.DS_Store
+
+# Large files
+*.tar.gz
+*.zip
+*.rar
+
+# API keys and secrets
+secrets/
+*.key
+*.pem

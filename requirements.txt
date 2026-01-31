@@ -1,0 +1,53 @@
+# Core ML/AI Libraries
+torch>=2.0.0
+transformers>=4.35.0
+accelerate>=0.24.0
+peft>=0.6.0
+bitsandbytes>=0.41.0
+datasets>=2.14.0
+
+# vLLM for inference
+vllm>=0.2.6
+ray>=2.8.0
+
+# API & Web
+fastapi>=0.104.0
+uvicorn>=0.24.0
+pydantic>=2.4.0
+python-multipart>=0.0.6
+
+# Data Processing
+pandas>=2.1.0
+numpy>=1.24.0
+tqdm>=4.66.0
+pyarrow>=14.0.0
+
+# Code Analysis
+tree-sitter>=0.20.0
+libclang>=16.0.0
+
+# Evaluation
+scikit-learn>=1.3.0
+matplotlib>=3.8.0
+seaborn>=0.13.0
+
+# Utilities
+pyyaml>=6.0.1
+python-dotenv>=1.0.0
+requests>=2.31.0
+aiohttp>=3.9.0
+
+# Development
+pytest>=7.4.0
+black>=23.10.0
+flake8>=6.1.0
+mypy>=1.6.0
+pre-commit>=3.5.0
+
+# AWS Deployment (optional)
+boto3>=1.29.0
+sagemaker>=2.190.0
+
+# Monitoring (optional)
+wandb>=0.16.0
+tensorboard>=2.15.0
