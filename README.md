@@ -191,7 +191,7 @@ Custom benchmark with 164 automotive-specific coding tasks:
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/sreekar-gajula/code-pilot.git
+git clone https://github.com/sreekarvamsi/code-pilot.git
 cd code-pilot
 ```
 
@@ -406,15 +406,15 @@ This project is licensed under the MIT License - see [LICENSE](LICENSE) file for
 ## 📧 Contact
 
 **Sreekar Gajula**
-- GitHub: [@sreekar-gajula](https://github.com/sreekar-gajula)
-- Email: sreekar.gajula@example.com
-- LinkedIn: [sreekar-gajula](https://linkedin.com/in/sreekar-gajula)
+- GitHub: [@sreekarvamsi](https://github.com/sreekarvamsi)
+- Email: sreekarvamsikrishnag@gmail.com
+- LinkedIn: [sreekar-gajula](https://linkedin.com/in/sreekarvamsi)
 
 ---
 
 ## 🌟 Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=sreekar-gajula/code-pilot&type=Date)](https://star-history.com/#sreekar-gajula/code-pilot&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=sreekar-gajula/code-pilot&type=Date)](https://star-history.com/#sreekarvamsi/code-pilot&Date)
 
 ---
 
