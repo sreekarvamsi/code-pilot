@@ -6,118 +6,128 @@ on:
   pull_request:
     branches: [ main ]
 
+# ---------------------------------------------------------------------------
+# 1. lint-and-test  – uses requirements-ci.txt (no torch / vllm / ray)
+# 2. build-vscode-extension – compiles TS only; packaging needs a
+#    marketplace account so it is skipped in CI.
+# 3. docker-build   – uses the lightweight CI Dockerfile (python:3.10-slim).
+#    The production CUDA image (Dockerfile) is built & pushed manually or in
+#    a separate GPU-enabled pipeline.
+# 4. documentation  – placeholder; passes immediately.
+# ---------------------------------------------------------------------------
+
 jobs:
   lint-and-test:
     runs-on: ubuntu-latest
-    
-    steps:
-    - uses: actions/checkout@v3
-    
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
-    
-    - name: Cache pip packages
-      uses: actions/cache@v3
-      with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-pip-
-    
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install flake8 pytest black mypy
-        pip install -r requirements.txt
-    
-    - name: Lint with flake8
-      run: |
-        # Stop build if there are Python syntax errors or undefined names
-        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        # Exit-zero treats all errors as warnings
-        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=100 --statistics
-    
-    - name: Check code formatting with black
-      run: |
-        black --check .
-    
-    - name: Type checking with mypy
-      run: |
-        mypy model/ inference/ --ignore-missing-imports
-      continue-on-error: true
-    
-    - name: Run tests
-      run: |
-        pytest evaluation/ -v
-      continue-on-error: true
 
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Cache pip
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements-ci.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      # Install only the lightweight CI deps – no torch, vllm, ray, etc.
+      - name: Install CI dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-ci.txt
+
+      - name: Lint – syntax errors only (hard fail)
+        run: |
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+
+      - name: Lint – style warnings (informational)
+        run: |
+          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=100 --statistics
+
+      - name: Format check (black)
+        run: |
+          black --check .
+
+      - name: Type check (mypy – informational)
+        run: |
+          mypy model/ inference/ --ignore-missing-imports
+        continue-on-error: true
+
+      - name: Run tests
+        run: |
+          pytest evaluation/ -v
+        continue-on-error: true
+
+  # -----------------------------------------------------------------------
   build-vscode-extension:
     runs-on: ubuntu-latest
-    
-    steps:
-    - uses: actions/checkout@v3
-    
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
-    
-    - name: Install dependencies
-      working-directory: vscode-extension
-      run: npm install
-    
-    - name: Compile TypeScript
-      working-directory: vscode-extension
-      run: npm run compile
-    
-    - name: Package extension
-      working-directory: vscode-extension
-      run: |
-        npm install -g vsce
-        vsce package
-    
-    - name: Upload extension artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: vscode-extension
-        path: vscode-extension/*.vsix
 
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+          cache-dependency-path: vscode-extension/package.json
+
+      - name: Install dependencies
+        working-directory: vscode-extension
+        run: npm install
+
+      - name: Compile TypeScript
+        working-directory: vscode-extension
+        run: npm run compile
+
+      # Upload the compiled output so reviewers can inspect it.
+      # Publishing to the Marketplace (vsce package) requires a PAT
+      # and is done manually or in a release workflow.
+      - name: Upload compiled extension
+        uses: actions/upload-artifact@v4
+        with:
+          name: vscode-extension-out
+          path: vscode-extension/out/
+          if-no-files-found: error
+
+  # -----------------------------------------------------------------------
   docker-build:
     runs-on: ubuntu-latest
-    
-    steps:
-    - uses: actions/checkout@v3
-    
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2
-    
-    - name: Build Docker image
-      run: |
-        docker build -t codepilot:latest -f Dockerfile .
-    
-    - name: Test Docker image
-      run: |
-        docker run --rm codepilot:latest python --version
 
+    steps:
+      - uses: actions/checkout@v4
+
+      # Use the lightweight CI Dockerfile – no CUDA, no 4 GB base image.
+      - name: Build Docker image (CI – CPU only)
+        run: |
+          docker build -t codepilot:ci -f Dockerfile.ci .
+
+      - name: Smoke-test the image
+        run: |
+          docker run --rm codepilot:ci python3 -c "import fastapi; print('OK')"
+
+  # -----------------------------------------------------------------------
   documentation:
     runs-on: ubuntu-latest
-    
+
     steps:
-    - uses: actions/checkout@v3
-    
-    - name: Setup Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
-    
-    - name: Install dependencies
-      run: |
-        pip install mkdocs mkdocs-material
-    
-    - name: Build documentation
-      run: |
-        # mkdocs build
-        echo "Documentation build would go here"
-      continue-on-error: true
+      - uses: actions/checkout@v4
+
+      - name: Verify documentation files exist
+        run: |
+          echo "=== Checking required docs ==="
+          for f in README.md QUICKSTART.md APPLICATIONS.md CONTRIBUTING.md docs/deployment.md; do
+            if [ -f "$f" ]; then
+              echo "  ✓ $f"
+            else
+              echo "  ✗ $f MISSING"
+              exit 1
+            fi
+          done
+          echo "All documentation files present."

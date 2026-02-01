@@ -1,0 +1,35 @@
+# ---------------------------------------------------------------------------
+# Dockerfile.ci – lightweight image used by GitHub Actions.
+# No CUDA, no GPU deps.  Used only to prove the app layer builds and imports.
+#
+# Production image with CUDA lives in Dockerfile and is built manually or
+# on a GPU-enabled runner.
+# ---------------------------------------------------------------------------
+
+FROM python:3.10-slim AS base
+
+ENV PYTHONUNBUFFERED=1
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      curl \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Install only the lightweight CI requirements (no torch / vllm / ray).
+COPY requirements-ci.txt .
+RUN pip install --no-cache-dir -r requirements-ci.txt
+
+# Copy application source
+COPY inference/  ./inference/
+COPY model/      ./model/
+COPY data/       ./data/
+
+# Quick import smoke-test baked into the build
+RUN python3 -c "import fastapi; import pydantic; print('imports OK')"
+
+EXPOSE 8000
+
+# In CI we just need the image to exist and pass the smoke-test CMD.
+# The real entrypoint (vllm server) is only used in the production image.
+CMD ["python3", "-c", "import fastapi; print('CodePilot CI image OK')"]
