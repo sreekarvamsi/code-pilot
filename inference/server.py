@@ -47,9 +47,7 @@ class CompletionRequest(BaseModel):
     top_p: float = Field(
         default=0.95, ge=0.0, le=1.0, description="Nucleus sampling parameter"
     )
-    top_k: int = Field(
-        default=50, ge=1, le=100, description="Top-k sampling parameter"
-    )
+    top_k: int = Field(default=50, ge=1, le=100, description="Top-k sampling parameter")
     stop: Optional[List[str]] = Field(default=None, description="Stop sequences")
     stream: bool = Field(default=False, description="Stream response")
 
@@ -65,9 +63,7 @@ class BugDetectionRequest(BaseModel):
     """Request model for bug detection"""
 
     code: str = Field(..., description="Code to analyze")
-    check_iso26262: bool = Field(
-        default=True, description="Check ISO 26262 violations"
-    )
+    check_iso26262: bool = Field(default=True, description="Check ISO 26262 violations")
 
 
 class TestGenerationRequest(BaseModel):
