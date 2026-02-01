@@ -99,7 +99,7 @@ AUTOMOTIVE_TEST_CASES: List[TestCase] = [
             "{"
         ),
         canonical_solution=(
-            '    if (response == NULL || length == NULL) return 0x13;\n'
+            "    if (response == NULL || length == NULL) return 0x13;\n"
             "    response[0] = 0x62;\n"
             "    response[1] = 0xF1;\n"
             "    response[2] = 0x90;\n"
@@ -174,17 +174,17 @@ class AutomotiveEvaluator:
     def _compile_and_test(code: str, test_cases: List[str]) -> bool:
         """Write a small C program, compile with gcc, and run assertions."""
         preamble = (
-            '#include <stdio.h>\n'
-            '#include <stdint.h>\n'
-            '#include <string.h>\n'
-            '#include <assert.h>\n'
-            '#include <stddef.h>\n\n'
+            "#include <stdio.h>\n"
+            "#include <stdint.h>\n"
+            "#include <string.h>\n"
+            "#include <assert.h>\n"
+            "#include <stddef.h>\n\n"
         )
 
         test_body = "\n    ".join(test_cases)
         program = (
             f"{preamble}{code}\n\n"
-            f'int main(void) {{\n    {test_body}\n'
+            f"int main(void) {{\n    {test_body}\n"
             f'    printf("All tests passed!\\n");\n'
             f"    return 0;\n}}\n"
         )
@@ -203,9 +203,7 @@ class AutomotiveEvaluator:
             if compile_result.returncode != 0:
                 return False
 
-            run_result = subprocess.run(
-                [str(exe_file)], capture_output=True, timeout=5
-            )
+            run_result = subprocess.run([str(exe_file)], capture_output=True, timeout=5)
             return run_result.returncode == 0
 
         except Exception:
